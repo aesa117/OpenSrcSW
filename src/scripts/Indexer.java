@@ -124,6 +124,7 @@ public class Indexer {
 						//kwMap에 있는 리스트를 찾고 가중치를 갱신함
 						LinkedList<String> kl = (LinkedList<String>)kwMap.get(kw.keyword);
 						double val = tf * (Math.log(docsList.getLength()) - Math.log(kw.cnt));
+						val = Math.round(val * 100)/100.0;
 						String id_weight = String.valueOf(i) + " " + String.valueOf(val);
 						kl.set(i, id_weight);
 						
