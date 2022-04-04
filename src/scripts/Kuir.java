@@ -12,6 +12,8 @@ public class Kuir {
 	public static void main(String[] args) throws ParserConfigurationException, IOException, TransformerException, SAXException, ClassNotFoundException {
 		String command = args[0];   
 		String path = args[1];
+		String command2 = args[2];
+		String query = args[3];
 
 		if(command.equals("-c")) {
 			MakeCollection collection = new MakeCollection(path);
@@ -24,6 +26,12 @@ public class Kuir {
 		else if(command.equals("-i")) {
 			Indexer indexer = new Indexer(path);
 			indexer.makeIndexer();
+		}
+		else if(command.equals("-s")) {
+			if(command2.equals("-q")) {
+				Searcher searcher = new Searcher(path, query);
+				searcher.CalcSim();
+			}
 		}
 
 	}
