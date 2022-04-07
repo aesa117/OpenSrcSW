@@ -33,6 +33,10 @@ public class Kuir {
 				searcher.CalcSim();
 			}
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature
 	}
 
 }

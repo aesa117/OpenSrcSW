@@ -66,12 +66,19 @@ public class Searcher {
 		String queryText[] = new String[kl.size()];
 		
 		HashMap<Integer, LinkedList<String>> idMap = new HashMap<Integer, LinkedList<String>>(); //각 문서의 단어에 대한 가중치 정보
+<<<<<<< HEAD
 		HashMap<String, Double> cosMap = new HashMap<String, Double>();
 		
 		for(int i=0; i<5; i++) {
 			qInnerProd[i] = 0.0;
 			q_absolute[i] = 0.0;
 			id_absolute[i] = 0.0;
+=======
+		HashMap<String, Double> qMap = new HashMap<String, Double>();
+		
+		for(int i=0; i<5; i++) {
+			qInnerProd[i] = 0.0;
+>>>>>>> feature
 		}
 		
 		for(int i=0; i< kl.size(); i++) {
@@ -99,15 +106,21 @@ public class Searcher {
 							
 							double value = weight * qList.get(j);
 							qInnerProd[i] += value;
+<<<<<<< HEAD
 							q_absolute[i] += Math.pow(qList.get(j), 2);
 							id_absolute[i] += Math.pow(weight, 2);
+=======
+>>>>>>> feature
 						}
 					}
 					
 				}
 			}
+<<<<<<< HEAD
 			q_absolute[i] = Math.sqrt(q_absolute[i]);
 			id_absolute[i] = Math.sqrt(id_absolute[i]);
+=======
+>>>>>>> feature
 		}
 		
 		for(int i=0; i < docsList.getLength(); i++) {
@@ -119,15 +132,25 @@ public class Searcher {
 				if(item.getNodeType() == Node.ELEMENT_NODE) { //현재 노드가 Element이면 수행
 					Element itemEl = (Element)item;
 					if(itemEl.getNodeName().equals("title")) { //노드 이름이 title와 동일하면 수행
+<<<<<<< HEAD
 						double value = qInnerProd[i] / (q_absolute[i] * id_absolute[i]);
 						value = Math.round(value * 100) / 100.0;
 						cosMap.put(itemEl.getTextContent(), value);
+=======
+						double value = qInnerProd[i];
+						value = Math.round(value * 100) / 100.0;
+						qMap.put(itemEl.getTextContent(), value);
+>>>>>>> feature
 					}
 				}
 			}
 		}
 	
+<<<<<<< HEAD
 		List<Entry<String, Double>> qIPList = new ArrayList<Entry<String, Double>>(cosMap.entrySet());
+=======
+		List<Entry<String, Double>> qIPList = new ArrayList<Entry<String, Double>>(qMap.entrySet());
+>>>>>>> feature
 		Collections.sort(qIPList, new Comparator<Entry<String, Double>>() {
 			public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
 				return o2.getValue().compareTo(o1.getValue());
@@ -137,7 +160,11 @@ public class Searcher {
 		int count = 0;
 		for(Entry<String, Double> entry : qIPList) {
 			if(entry.getValue() == 0 || count == 3) break;
+<<<<<<< HEAD
 			System.out.println("Sim(Q, " + entry.getKey() + ") : " + entry.getValue());
+=======
+			System.out.println("(Q, " + entry.getKey() + ") : " + entry.getValue());
+>>>>>>> feature
 			count++;
 		}
 		if(count == 0) {
@@ -145,4 +172,8 @@ public class Searcher {
 		}
 	}
 	
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> feature
