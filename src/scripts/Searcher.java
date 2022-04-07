@@ -43,20 +43,34 @@ public class Searcher {
 	}
 	
 	public void CalcSim() throws FileNotFoundException, IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
+		InputStream inputStream = new FileInputStream(new File("./index.xml"));
+		Reader reader = new InputStreamReader(inputStream, "UTF-8");
+		InputSource is = new InputSource(reader);
+		is.setEncoding("UTF-8");
+		
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		
+		Document document = docBuilder.parse(is);
+		
+		Element docs = document.getDocumentElement(); //루트 노드 얻기 - docs
+		NodeList docsList = docs.getChildNodes();
+		
 		KeywordExtractor ke = new KeywordExtractor();
 		KeywordList kl = ke.extractKeyword(query, true);
 		LinkedList<Integer> qList = new LinkedList<Integer>(); //문자의 빈도수 저장 리스트
-		double[] qInnerProd = new double[5];
-		HashMap<Integer, Double> qInnerProdMap = new HashMap<Integer, Double>();
+		
+		double[] qInnerProd = new double[docsList.getLength()]; //id번째 문서에 대한 내적 합
+		double[] q_absolute = new double[docsList.getLength()];
+		double[] id_absolute = new double[docsList.getLength()];
+		String queryText[] = new String[kl.size()];
+		
+		HashMap<Integer, LinkedList<String>> idMap = new HashMap<Integer, LinkedList<String>>(); //각 문서의 단어에 대한 가중치 정보
 		HashMap<String, Double> qMap = new HashMap<String, Double>();
 		
 		for(int i=0; i<5; i++) {
 			qInnerProd[i] = 0.0;
-			qInnerProdMap.put(i, 0.0);
 		}
-		
-		
-		String queryText[] = new String[kl.size()];
 		
 		for(int i=0; i< kl.size(); i++) {
 			Keyword kwrd = kl.get(i);
@@ -72,42 +86,23 @@ public class Searcher {
 		HashMap<String, LinkedList> hm = (HashMap)obj;
 		Iterator<String> iter = hm.keySet().iterator();
 		
-		for(int i=0; i<queryText.length; i++) {
-			if(hm.containsKey(queryText[i])) {
-				LinkedList<String> list = (LinkedList<String>)hm.get(queryText[i]);
-				for(int j=0; j<list.size(); j++) {
-					String[] temp = list.get(j).split(" ");
-					double weight = Double.parseDouble(temp[1]);
+		for(int i=0; i<docsList.getLength(); i++) {
+			for(int j=0; j<queryText.length; j++) {
+				if(hm.containsKey(queryText[j])) {
+					LinkedList<String> list = (LinkedList<String>)hm.get(queryText[j]);
+					for(int k=0; k<list.size(); k++) {
+						if(i == k) {
+							String[] temp = list.get(k).split(" ");
+							double weight = Double.parseDouble(temp[1]);
+							
+							double value = weight * qList.get(j);
+							qInnerProd[i] += value;
+						}
+					}
 					
-					double value = weight + qList.get(i);
-					qInnerProd[j] += value;
-					double origin = qInnerProdMap.get(j);
-					qInnerProdMap.put(j, origin + value);
 				}
 			}
 		}
-		
-		for(int i=0; i<qInnerProd.length; i++) {
-			qInnerProd[i] = Math.round(qInnerProd[i] * 100) / 100.0;
-			double origin = qInnerProdMap.get(i);
-			qInnerProdMap.put(i, Math.round(origin * 100) / 100.0);
-		}
-		
-		
-		
-		//
-		InputStream inputStream = new FileInputStream(new File("./index.xml"));
-		Reader reader = new InputStreamReader(inputStream, "UTF-8");
-		InputSource is = new InputSource(reader);
-		is.setEncoding("UTF-8");
-		
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		
-		Document document = docBuilder.parse(is);
-		
-		Element docs = document.getDocumentElement(); //루트 노드 얻기 - docs
-		NodeList docsList = docs.getChildNodes();
 		
 		for(int i=0; i < docsList.getLength(); i++) {
 			Node docNode = docsList.item(i);
@@ -118,14 +113,14 @@ public class Searcher {
 				if(item.getNodeType() == Node.ELEMENT_NODE) { //현재 노드가 Element이면 수행
 					Element itemEl = (Element)item;
 					if(itemEl.getNodeName().equals("title")) { //노드 이름이 title와 동일하면 수행
-						//키 값이 i인 qInnerProdMap으로부터 값을 읽어와 해당 값에 맞는 타이틀을 넣음
-						qMap.put(itemEl.getTextContent(), qInnerProdMap.get(i));
-						
+						double value = qInnerProd[i];
+						value = Math.round(value * 100) / 100.0;
+						qMap.put(itemEl.getTextContent(), value);
 					}
 				}
 			}
 		}
-		
+	
 		List<Entry<String, Double>> qIPList = new ArrayList<Entry<String, Double>>(qMap.entrySet());
 		Collections.sort(qIPList, new Comparator<Entry<String, Double>>() {
 			public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
@@ -135,8 +130,8 @@ public class Searcher {
 		
 		int count = 0;
 		for(Entry<String, Double> entry : qIPList) {
-			if(entry == null || count == 3) break;
-			System.out.println("Q와 " + entry.getKey() + " 문서와의 내적 : " + entry.getValue());
+			if(entry.getValue() == 0 || count == 3) break;
+			System.out.println("(Q, " + entry.getKey() + ") : " + entry.getValue());
 			count++;
 		}
 		if(count == 0) {
