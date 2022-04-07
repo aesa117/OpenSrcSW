@@ -42,7 +42,7 @@ public class Searcher {
 		this.query = query;
 	}
 	
-	public void CalcSim() throws FileNotFoundException, IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
+	public void InnerProduct() throws FileNotFoundException, IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
 		InputStream inputStream = new FileInputStream(new File("./index.xml"));
 		Reader reader = new InputStreamReader(inputStream, "UTF-8");
 		InputSource is = new InputSource(reader);
