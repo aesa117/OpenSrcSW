@@ -73,6 +73,7 @@ public class Searcher {
 			q_absolute[i] = 0.0;
 			id_absolute[i] = 0.0;
 		}
+		HashMap<String, Double> qMap = new HashMap<String, Double>();
 		
 		for(int i=0; i<5; i++) {
 			qInnerProd[i] = 0.0;
@@ -100,7 +101,6 @@ public class Searcher {
 						if(i == k) {
 							String[] temp = list.get(k).split(" ");
 							double weight = Double.parseDouble(temp[1]);
-							
 							double value = weight * qList.get(j);
 							qInnerProd[i] += value;
 
@@ -144,11 +144,11 @@ public class Searcher {
 		for(Entry<String, Double> entry : qIPList) {
 			if(entry.getValue() == 0 || count == 3) break;
 			System.out.println("Sim(Q, " + entry.getKey() + ") : " + entry.getValue());
+			System.out.println("(Q, " + entry.getKey() + ") : " + entry.getValue());
 			count++;
 		}
 		if(count == 0) {
 			System.out.println("검색된 문서가 없습니다.");
 		}
 	}
-
 }

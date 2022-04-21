@@ -99,7 +99,7 @@ public class Indexer {
 							}
 							kwMap.put(w[0].trim(), list);
 						}
-					}
+					}   
 				}
 			}
 		}
