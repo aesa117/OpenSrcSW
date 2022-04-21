@@ -33,6 +33,12 @@ public class Kuir {
 				searcher.CalcSim();
 			}
 		}
+		else if(command.equals("-m")) {
+			if(command2.equals("-q")) {
+				Midterm mt = new Midterm(path, query);
+				mt.showSnippset();
+			}
+		}
 	}
 
 }
