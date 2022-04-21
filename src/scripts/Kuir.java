@@ -30,13 +30,9 @@ public class Kuir {
 		else if(command.equals("-s")) {
 			if(command2.equals("-q")) {
 				Searcher searcher = new Searcher(path, query);
-				searcher.CalcSim();
+				searcher.InnerProduct();
 			}
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> feature
 	}
 
 }
