@@ -108,7 +108,7 @@ public class Midterm {
 						}
 					}
 					if(score[j] >= score[snippet]) {
-						snippet = k;
+						snippet = k; 
 					}
 				}
 				System.out.println(map.get(j) + bm.get(j).substring(snippet, snippet+30) + score[j]);
